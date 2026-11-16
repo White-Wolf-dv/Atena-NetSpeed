@@ -11,7 +11,7 @@
 <br>
 
 <!-- Replace 'screenshot.png' with the actual path/name of your preview image in the repo -->
-<img src="screenshot.png" alt="Atena NetSpeed Preview" width="750" style="border-radius: 12px;">
+
 
 </div>
 
