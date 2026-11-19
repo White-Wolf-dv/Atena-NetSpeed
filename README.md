@@ -1,5 +1,7 @@
 <div align="center">
 
+  <img src="icon.ico" alt="GafelSound Logo" width="110" height="110" />
+
 # 🌐 Atena NetSpeed Overlay
 **A sleek, ultra-lightweight glassmorphism network speed monitor widget for Windows**
 
@@ -32,8 +34,11 @@
 ---
 
 ## 🚀 Getting Started
-
 ### Option 1: Standalone Executable (No Python Required)
 1. Go to the [**Releases**](../../releases) section.
 2. Download the latest `Atena-NetSpeed.exe` file and run it directly.
+
+---
+
+  <img src="https://github.com/White-Wolf-dv/White-Wolf-dv/blob/main/Gif/14.gif" align="center" width="550" />
 
