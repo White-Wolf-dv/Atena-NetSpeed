@@ -39,6 +39,6 @@
 2. Download the latest `Atena-NetSpeed.exe` file and run it directly.
 
 ---
-
+  <div align="center">
   <img src="https://github.com/White-Wolf-dv/White-Wolf-dv/blob/main/Gif/14.gif" align="center" width="550" />
-
+  </div>
