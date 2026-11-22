@@ -57,7 +57,7 @@ This repository hosts both implementations side by side so you can choose betwee
 
 ```text
 Atena-NetSpeed-Overlay/
-├── NetSpeedOverlay/             # .NET 11 (C#) Edition
+├── DotNet/                      # .NET 11 (C#) Edition
 │   ├── NetSpeedOverlay.csproj
 │   ├── Program.cs
 │   ├── NativeMethods.cs
