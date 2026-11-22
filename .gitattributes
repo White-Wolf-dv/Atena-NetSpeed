@@ -1,0 +1,2 @@
+*.csproj linguist-language=C#
+*.csproj linguist-detectable=true
