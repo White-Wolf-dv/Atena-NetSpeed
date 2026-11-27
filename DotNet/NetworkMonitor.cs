@@ -20,7 +20,6 @@ internal unsafe struct NetworkMonitor
         ReadTotals(out ulong rx, out ulong tx, out uint signature);
         long now = Stopwatch.GetTimestamp();
 
-        // در اولین اجرا یا هنگام قطع/وصل شدن کارت شبکه، مبنا را ریست می‌کنیم تا عدد کاذب ثبت نشود
         if (!_initialized || signature != _lastSignature)
         {
             _lastRx = rx;
@@ -58,7 +57,6 @@ internal unsafe struct NetworkMonitor
         try
         {
             uint count = *(uint*)tablePtr;
-            // فیلد Table در MIB_IF_TABLE2 به دلیل تراز ۸ بایتی از آفست ۸ شروع می‌شود
             byte* rowsBase = (byte*)tablePtr + 8;
 
             ulong hwRx = 0, hwTx = 0;
