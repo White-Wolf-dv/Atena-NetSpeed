@@ -8,9 +8,8 @@ namespace NetSpeedOverlay;
 
 internal sealed class OverlayForm : Form
 {
-    // تنظیمات پاسخ‌گویی و ابعاد (قابل تنظیم)
-    private const int SampleIntervalMs = 250; // ۴ بار در ثانیه (۴ برابر سریع‌تر از نسخه ۱ ثانیه‌ای)
-    private const float EmaAlpha = 0.68f;     // ضریب واکنش سریع؛ ۱.۰ یعنی بدون هیچ هموارسازی
+    private const int SampleIntervalMs = 250; 
+    private const float EmaAlpha = 0.68f;     
     private const int LogicalWidth = 210;
     private const int LogicalHeight = 110;
     private const int HistoryLen = 30;
@@ -18,7 +17,6 @@ internal sealed class OverlayForm : Form
     private const float GraphBottom = LogicalHeight - 10.0f;
     private const float GraphHeight = 22.0f;
 
-    // رنگ‌ها و قلم‌های از پیش ساخته‌شده (بدون تخصیص حافظه در هر فریم)
     private static readonly Color GreenColor = Color.FromArgb(255, 0, 255, 136);
     private static readonly Color BlueColor = Color.FromArgb(255, 0, 180, 255);
 
@@ -45,7 +43,6 @@ internal sealed class OverlayForm : Form
     private readonly RectangleF _dlGlowRect = new(8, 29, 92, 28);
     private readonly RectangleF _ulGlowRect = new(108, 29, 92, 28);
 
-    // بافر حلقوی و نقاط از پیش تخصیص‌یافته برای نمودار
     private readonly float[] _dlHistory = new float[HistoryLen];
     private readonly float[] _ulHistory = new float[HistoryLen];
     private readonly float[] _xCoords = new float[HistoryLen];
@@ -65,7 +62,6 @@ internal sealed class OverlayForm : Form
     private NetworkMonitor _monitor;
     private readonly System.Windows.Forms.Timer _timer;
 
-    // منابع ثابت GDI و DIB Section برای رندر فوق‌سریع
     private nint _memDc;
     private nint _hBitmap;
     private nint _oldBitmap;
@@ -93,11 +89,10 @@ internal sealed class OverlayForm : Form
         for (int i = 0; i < HistoryLen; i++)
             _xCoords[i] = GraphLeft + i * step;
 
-        // قرارگیری اولیه در گوشه پایین-راست صفحه بالای تسک‌بار
         Rectangle workArea = Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 1280, 720);
         Location = new Point(workArea.Right - LogicalWidth - 16, workArea.Bottom - LogicalHeight - 16);
 
-        _monitor.Sample(); // ثبت نقطه مبنای اولیه
+        _monitor.Sample(); 
 
         _timer = new System.Windows.Forms.Timer { Interval = SampleIntervalMs };
         _timer.Tick += OnSampleTick;
@@ -181,7 +176,6 @@ internal sealed class OverlayForm : Form
     {
         (float rawDl, float rawUl) = _monitor.Sample();
 
-        // فیلتر هموارسازی سریع با صفرشدن تمیز هنگام توقف ترافیک
         _dlSpeed = rawDl < 0.005f && _dlSpeed < 0.015f
             ? 0f
             : _dlSpeed + EmaAlpha * (rawDl - _dlSpeed);
@@ -232,7 +226,7 @@ internal sealed class OverlayForm : Form
             {
                 biSize = (uint)Marshal.SizeOf<BITMAPINFOHEADER>(),
                 biWidth = _pixelWidth,
-                biHeight = -_pixelHeight, // منفی برای ترتیب Top-Down منطبق با Format32bppPArgb
+                biHeight = -_pixelHeight, 
                 biPlanes = 1,
                 biBitCount = 32,
                 biCompression = 0
@@ -254,7 +248,6 @@ internal sealed class OverlayForm : Form
         _frameGraphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
         _frameGraphics.ScaleTransform(dpiScale, dpiScale);
 
-        // رسم یک‌باره پس‌زمینه ایستا و ذخیره بایت‌های خام آن
         DrawStaticBackground(_frameGraphics);
         _frameGraphics.Flush();
 
@@ -282,15 +275,12 @@ internal sealed class OverlayForm : Form
         g.FillPath(bgBrush, bgPath);
         g.DrawPath(borderPen, bgPath);
 
-        // خط جداکننده میانی
         using var dividerPen = new Pen(Color.FromArgb(35, 255, 255, 255), 1.0f);
         g.DrawLine(dividerPen, LogicalWidth / 2f, 18f, LogicalWidth / 2f, 68f);
 
-        // فلش‌های دانلود و آپلود
         DrawArrow(g, 28f, 19f, isDown: true, GreenColor);
         DrawArrow(g, 126f, 19f, isDown: false, BlueColor);
 
-        // برچسب‌های ثابت
         using var labelFont = new Font("Segoe UI", 7f, FontStyle.Bold, GraphicsUnit.Point);
         using var unitFont = new Font("Segoe UI", 6.2f, FontStyle.Regular, GraphicsUnit.Point);
         using var textWhite = new SolidBrush(Color.FromArgb(235, 240, 250));
@@ -303,10 +293,8 @@ internal sealed class OverlayForm : Form
         g.DrawString("MB/s", unitFont, unitBrush, new RectangleF(8, 56, 92, 14), _centerFormat);
         g.DrawString("MB/s", unitFont, unitBrush, new RectangleF(108, 56, 92, 14), _centerFormat);
 
-        // نشانگر وای‌فای گوشه بالا-راست
         DrawWifiBadge(g, rect, GreenColor);
 
-        // نوارهای رنگی کنار نمودار
         using var leftBarPen = CreateRoundPen(GreenColor, 1.5f);
         using var rightBarPen = CreateRoundPen(BlueColor, 1.5f);
         g.DrawLine(leftBarPen, rect.Left + 1f, rect.Bottom - 28f, rect.Left + 1f, rect.Bottom - 11f);
@@ -363,13 +351,11 @@ internal sealed class OverlayForm : Form
         if (!IsHandleCreated || _dibBits == 0 || _frameGraphics is null || _staticBgBytes is null)
             return;
 
-        // ۱. بازگردانی پس‌زمینه ایستا با کپی مستقیم حافظه
         fixed (byte* src = _staticBgBytes)
         {
             Buffer.MemoryCopy(src, (void*)_dibBits, _staticBgBytes.Length, _staticBgBytes.Length);
         }
 
-        // ۲. فرمت متن فقط در صورت تغییر عدد
         int dlCenti = (int)MathF.Round(_dlSpeed * 100f);
         if (dlCenti != _lastDlCenti)
         {
@@ -390,7 +376,6 @@ internal sealed class OverlayForm : Form
         _frameGraphics.DrawString(_ulText, _numFont, _blueGlowBrush, _ulGlowRect, _centerFormat);
         _frameGraphics.DrawString(_ulText, _numFont, _blueBrush, _ulTextRect, _centerFormat);
 
-        // ۳. محاسبه مقیاس نمودار
         float maxVal = 0.5f;
         for (int i = 0; i < HistoryLen; i++)
         {
@@ -404,13 +389,11 @@ internal sealed class OverlayForm : Form
         float dlScale = (GraphHeight - 7.0f) * invMax;
         float ulScale = (GraphHeight - 9.0f) * invMax;
 
-        // ۴. رسم منحنی‌های نرم دانلود و آپلود
         DrawSmoothSeries(_frameGraphics, _dlHistory, dlBase, dlScale, _penDlGlow, _penDlMain);
         DrawSmoothSeries(_frameGraphics, _ulHistory, ulBase, ulScale, _penUlGlow, _penUlMain);
 
         _frameGraphics.Flush();
 
-        // ۵. اعمال مستقیم روی پنجره شفاف ویندوز
         nint screenDc = NativeMethods.GetDC(0);
         try
         {
