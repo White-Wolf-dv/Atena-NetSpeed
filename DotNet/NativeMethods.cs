@@ -101,7 +101,6 @@ internal struct BITMAPINFOHEADER
     public uint biClrImportant;
 }
 
-// نگاشت مستقیم فیلدهای ضروری از ساختار MIB_IF_ROW2 ویندوز بدون تخصیص حافظه اضافه
 [StructLayout(LayoutKind.Explicit, Size = StructSize)]
 internal struct MIB_IF_ROW2
 {
